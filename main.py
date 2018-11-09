@@ -19,6 +19,10 @@ while(cap.isOpened()):
     # Read the image
     #image = cv2.imread(imagePath)
     ret, frame = cap.read()
+    height, width = frame.shape[:2]
+    center_h = int(height / 2)
+    center_w = int(width / 2)
+    h_w_rec = 200
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # Detect faces in the image
@@ -29,12 +33,17 @@ while(cap.isOpened()):
         minSize=(30, 30)
         # flags = cv2.CV_HAAR_SCALE_IMAGE
     )
-
+    cv2.rectangle(frame, (center_w - h_w_rec, center_h - h_w_rec), (center_w + h_w_rec, center_h + h_w_rec),(255, 0, 0), 2)
     print("Found {0} faces!".format(len(faces)))
 
     if(len(faces) > 0):
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            if((x > center_w - h_w_rec) and (y > center_h - h_w_rec))and ((x + w <center_w + h_w_rec )and(y + h<center_h + h_w_rec)):
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                cv2.putText(frame, "STOP ROTATE", (250, 250), font, 1, (0, 0, 255), 2, cv2.LINE_AA)
+
+
     else:
         text = "Face not found."
         text1 = "Rotate the camera please."
